@@ -18,14 +18,13 @@ namespace ariel
         Player &player2;
         std::string mainLog;
         std::string lastTurn;
-
+        bool isFinished = false;
         int winner;
         int roundsPlayed;
         void fillCards();
         void shuffleDeck();
         void splitCards();
         void checkWin();
-        void tie_war();
 
     public:
         // constructors:
@@ -40,7 +39,7 @@ namespace ariel
         // assignment operators - copy and move
         Game &operator=(const Game &other);
         Game &operator=(Game &&other) noexcept;
-        
+
         //  methods:
         void playTurn();
         void playAll();
@@ -48,7 +47,6 @@ namespace ariel
         void printWiner();
         void printLog();
         void printStats();
-        int getRoundsPlayed() const;
         std::string getLog();
         const Player &getWinner() const;
     };

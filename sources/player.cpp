@@ -73,6 +73,7 @@ Player::~Player()
 // add cards to the player's cards_stack
 void Player::addTakenCard(const Card &card)
 {
+
     cards_taken.push_back(card);
 }
 void Player::addCard(const Card &card)

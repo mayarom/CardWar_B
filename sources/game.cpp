@@ -42,7 +42,6 @@ namespace ariel
                   << "    \\_/\\_/  |_____||_____| \\____| \\___/ |___|___||_____|          |__|   \\___/           |__|  |__|__||_____|          \\_/\\_/  |__|__||__|\\_|        |___,_||__|__||___|___||_____|\n";
 
         std::cout << RESET;
-
         cout << "  " << endl;
 
         this->roundsPlayed = 0;
@@ -187,9 +186,11 @@ namespace ariel
     void Game::playAll()
 
     {
+
+        std::cout << "The game is started!" << std::endl;
         std::cout << "Now, each player has: " << player1.stacksize() << " cards" << std::endl;
         std::cout << "In the middle heap there are:  " << middle_stack.size() << " cards" << std::endl;
-        while (winner == -1 && roundsPlayed < 27)
+        while (winner == -1 && roundsPlayed < 27 && this->isFinished == false)
         {
 
             playTurn();
@@ -200,7 +201,6 @@ namespace ariel
 
     // playing a turn:
     void Game::playTurn()
-
     {
 
         // error
@@ -208,6 +208,7 @@ namespace ariel
         {
             throw std::invalid_argument("Players cannot have the same name!");
         }
+
         roundsPlayed++;
 
         // print the turn number
@@ -232,8 +233,8 @@ namespace ariel
         {
             player1.addTurnWon();
             player2.addTurnLost();
-            mainLog += player1.getName() + " played " + middle_stack[middle_stack.size() - 1].toString() + "\n" + player2.getName() + " played " + middle_stack[middle_stack.size() - 2].toString() + " - " + player1.getName() + " won the turn" + "\n\n";
-
+            mainLog += player1.getName() + " played:\n " + middle_stack[middle_stack.size() - 1].toString() + "\n" + player2.getName() + " played:\n " + middle_stack[middle_stack.size() - 2].toString() + "\n " + player1.getName() + " won the turn" + "\n\n";
+            lastTurn = player1.getName() + " played:\n " + middle_stack[middle_stack.size() - 1].toString() + "\n" + player2.getName() + " played:\n " + middle_stack[middle_stack.size() - 2].toString() + "\n " + player1.getName() + " won the turn" + "\n\n";
             // Display the winner of the turn
             std::cout << "\033[1;32m" // Set text color to green
                       << "Winner of the turn: " << player1.getName()
@@ -241,10 +242,9 @@ namespace ariel
                       << std::endl;
 
             // add the cards to the winner
-            for (unsigned int i = 0; i < middle_stack.size(); i++)
-            {
-                player1.addTakenCard(middle_stack[i]);
-            }
+
+            player1.addTakenCard(middle_stack[middle_stack.size() - 2]);
+            player1.addTakenCard(middle_stack[middle_stack.size() - 1]);
 
             checkWin();
             // clear the middle stack
@@ -257,18 +257,16 @@ namespace ariel
             player2.addTurnWon();
             // print the winner of the turn
             // Display the winner of the turn
-            mainLog += player1.getName() + " played: " + middle_stack[middle_stack.size() - 1].toString() + "\n" + player2.getName() + " played: " + middle_stack[middle_stack.size() - 1].toString() + "\n" + player2.getName() + " won the turn" + "\n\n";
-
+            mainLog += player1.getName() + " played:\n " + middle_stack[middle_stack.size() - 1].toString() + "\n" + player2.getName() + " played: \n" + middle_stack[middle_stack.size() - 1].toString() + "\n" + player2.getName() + " won the turn" + "\n\n";
+            lastTurn = player1.getName() + " played:\n " + middle_stack[middle_stack.size() - 1].toString() + "\n" + player2.getName() + " played: \n" + middle_stack[middle_stack.size() - 1].toString() + "\n" + player2.getName() + " won the turn" + "\n\n";
             std::cout << "\033[1;32m" // Set text color to green
                       << "Winner of the turn: " << player2.getName()
                       << "\033[0m" // Reset text color to default
                       << std::endl;
 
             // add the cards to the winner
-            for (unsigned int i = 0; i < middle_stack.size(); i++)
-            {
-                player2.addTakenCard(middle_stack[i]);
-            }
+            player2.addTakenCard(middle_stack[middle_stack.size() - 2]);
+            player2.addTakenCard(middle_stack[middle_stack.size() - 1]);
 
             checkWin();
             // clear the middle stack
@@ -278,12 +276,13 @@ namespace ariel
         }
         // if the cards are equal - war
         {
+            // print middle size
             checkWin();
             // update the draw counter
             player1.addTurnDraw();
             player2.addTurnDraw();
-            mainLog += player1.getName() + " played " + middle_stack[middle_stack.size() - 1].toString() + "\n" + player2.getName() + " played " + middle_stack[middle_stack.size() - 1].toString() + " - " + "WAR" + "\n\n";
-
+            mainLog += player1.getName() + " played :\n" + middle_stack[middle_stack.size() - 1].toString() + "\n" + player2.getName() + " played:\n " + middle_stack[middle_stack.size() - 1].toString() + " \n" + "It's a... war!" + "\n\n";
+            lastTurn = player1.getName() + " played :\n" + middle_stack[middle_stack.size() - 1].toString() + "\n" + player2.getName() + " played:\n " + middle_stack[middle_stack.size() - 1].toString() + " \n" + "It's a... war!" + "\n\n";
             // tie_war();
             std::cout << GREEN << "tie! we are starting a...                " << endl;
             std::cout << " __    __              " << std::endl;
@@ -297,16 +296,21 @@ namespace ariel
 
             // declare the cards
             int tie_seq = 1;
-            roundsPlayed++;
 
-            while (roundsPlayed <= 26 && player1.stacksize() > 0 && player2.stacksize() > 0)
+            while (player1.stacksize() > 0 && player2.stacksize() > 0)
             {
 
+                roundsPlayed++;
                 // print the turn number
                 std::cout << "\033[1;36m--------------------------------------------\033[0m" << std::endl;
                 std::cout << "\033[1;36m               Turn number: " << roundsPlayed << "\033[0m" << std::endl;
                 std::cout << "\033[1;36m--------------------------------------------\033[0m" << std::endl;
                 // print the tie sequence
+                // prints how many cards each player has
+                std::cout << player1.getName() << " has " << player1.stacksize() << " cards left" << std::endl;
+                std::cout << player2.getName() << " has " << player2.stacksize() << " cards left" << std::endl
+                          << std::endl;
+
                 std::cout << "Tie sequence: " << tie_seq << std::endl;
 
                 // every player put in the middle stack two cards
@@ -329,8 +333,8 @@ namespace ariel
                 }
 
                 // print the the last two cards
-                std::cout << player1.getName() << " card:   " << player2.getName() << " card: " << std::endl;
                 std::cout << "The last two open cards are:" << std::endl;
+                std::cout << player1.getName() << " card:   " << player2.getName() << " card: " << std::endl;
                 std::cout << Card::toStringTwo(middle_stack[middle_stack.size() - 2], middle_stack[middle_stack.size() - 1]) << std::endl
                           << std::endl;
 
@@ -353,8 +357,8 @@ namespace ariel
                     }
 
                     middle_stack.clear();
-                    mainLog += player1.getName() + " played " + middle_stack[middle_stack.size() - 2].toString() + "\n" + player2.getName() + " played " + middle_stack[middle_stack.size() - 1].toString() + " - " + player1.getName() + " won the turn" + "\n\n";
-
+                    mainLog += player1.getName() + " played: \n" + middle_stack[middle_stack.size() - 2].toString() + "\n" + player2.getName() + " played: \n" + middle_stack[middle_stack.size() - 1].toString() + " \n " + player1.getName() + " won the turn" + "\n\n";
+                    lastTurn = player1.getName() + " played: \n" + middle_stack[middle_stack.size() - 2].toString() + "\n" + player2.getName() + " played: \n" + middle_stack[middle_stack.size() - 1].toString() + " \n " + player1.getName() + " won the turn" + "\n\n";
                     checkWin();
                     break;
                 }
@@ -375,33 +379,23 @@ namespace ariel
                         player2.addTakenCard(middle_stack[static_cast<std::vector<Card>::size_type>(i)]);
                     }
                     middle_stack.clear();
-                    mainLog += player1.getName() + " played " + middle_stack[middle_stack.size() - 2].toString() + "\n" + player2.getName() + " played " + middle_stack[middle_stack.size() - 1].toString() + " - " + player2.getName() + " won the turn" + "\n\n";
-
+                    mainLog += player1.getName() + " played :\n" + middle_stack[middle_stack.size() - 2].toString() + "\n" + player2.getName() + " played: \n " + middle_stack[middle_stack.size() - 1].toString() + " \n" + player2.getName() + " won the turn" + "\n\n";
+                    lastTurn = player1.getName() + " played :\n" + middle_stack[middle_stack.size() - 2].toString() + "\n" + player2.getName() + " played: \n " + middle_stack[middle_stack.size() - 1].toString() + " \n" + player2.getName() + " won the turn" + "\n\n";
                     checkWin();
                     break;
                 }
                 else // if the cards are equal - continue
                 {
                     checkWin();
-
                     // update the draw counter
                     player1.addTurnDraw();
                     player2.addTurnDraw();
-                    mainLog += player1.getName() + " played " + middle_stack[middle_stack.size() - 2].toString() + "\n" + player2.getName() + " played " + middle_stack[middle_stack.size() - 1].toString() + " - " + "WAR" + "\n\n";
-
+                    mainLog += player1.getName() + " played:\n " + middle_stack[middle_stack.size() - 2].toString() + "\n" + player2.getName() + " played:\n " + middle_stack[middle_stack.size() - 1].toString() + " - " + "WAR" + "\n\n";
                     tie_seq++;
+                    lastTurn = player1.getName() + " played:\n " + middle_stack[middle_stack.size() - 2].toString() + "\n" + player2.getName() + " played:\n " + middle_stack[middle_stack.size() - 1].toString() + " - " + "WAR" + "\n\n";
                 }
             }
-
-            // if the game ends in a tie, return
-            if (roundsPlayed == 26 && player1.stacksize() > 0 && player2.stacksize() > 0)
-            {
-                std::cout << "\033[1;33m" // Set text color to yellow
-                          << "The game ended in a tie!"
-                          << "\033[0m" // Reset text color to default
-                          << std::endl;
-                checkWin();
-            }
+            checkWin();
         }
     }
     void Game::printLastTurn()
@@ -582,7 +576,7 @@ namespace ariel
         // Celebrate the rounds played
         cout << "--------------------------------------------------------" << endl;
 
-        cout << YELLOW << "Congratulations to all players for playing " << getRoundsPlayed() << " rounds!" << RESET << endl;
+        cout << YELLOW << "Congratulations to all players for playing " << this->roundsPlayed << " rounds!" << RESET << endl;
         cout << "--------------------------------------------------------" << endl
              << endl;
 
@@ -643,41 +637,41 @@ namespace ariel
         // if pass 26 round or one of the players has no cards
         if (roundsPlayed > 26 || player1.stacksize() == 0 || player2.stacksize() == 0)
         {
-            if (middle_stack.size() > 0)
+
+            int p = 1;
+            // divide it between the players
+            int sum = player1.cardesTaken();
+            sum += player2.cardesTaken();
+            sum += player1.stacksize();
+            sum += player2.stacksize();
+            while ((middle_stack.size() > 0) && (sum < 52))
             {
 
-                if (player1.cardesTaken() + player2.cardesTaken() < 52)
+                if (p == 1)
                 {
-                    // divide it between the players
-                    while (middle_stack.size() > 0)
-                    {
-                        player1.addTakenCard(middle_stack[middle_stack.size() - 1]);
-                        if (middle_stack.size() >= 1)
-                            player2.addTakenCard(middle_stack[middle_stack.size() - 2]);
-                    }
-                }
-                middle_stack.clear();
-            }
-            {
-                // divide it between the players
-                while (middle_stack.size() > 0)
-                {
+
                     player1.addTakenCard(middle_stack[middle_stack.size() - 1]);
-                    if (middle_stack.size() >= 1)
-                        player2.addTakenCard(middle_stack[middle_stack.size() - 2]);
+                    p = 2;
+                    // remove the card from the middle stack
+                    middle_stack.pop_back();
                 }
-                middle_stack.clear();
+                else
+                {
+                    player2.addTakenCard(middle_stack[middle_stack.size() - 1]);
+                    p = 1;
+                    // remove the card from the middle stack
+                    middle_stack.pop_back();
+                }
             }
+
+            middle_stack.clear();
+
             // print line
             cout << "--------------------------------------------------------" << endl;
-            cout << "*** The game is over ***" << endl;
+            cout << MAGENTA << "*** The game is over after " << roundsPlayed << " turns ***" << endl;
+            // finish the game
+            isFinished = true;
 
-            // print every player's cards
-            cout << "Player 1 cards taken: " << player1.cardesTaken() << endl;
-            player1.cardesTaken();
-            cout << "Player 2 cards taken: " << player2.cardesTaken() << endl;
-            // print the middle cards
-            cout << "Middle cards: " << middle_stack.size() << endl;
             cout << "--------------------------------------------------------" << endl;
 
             if (player1.cardesTaken() > player2.cardesTaken())
@@ -700,14 +694,8 @@ namespace ariel
         else
         {
             winner = -1;
-            return;
+            return; // no winner yet - continue the game
         }
-    }
-
-    // returning the number of rounds played:
-    int Game::getRoundsPlayed() const
-    {
-        return roundsPlayed - 1;
     }
 
 } // namespace war

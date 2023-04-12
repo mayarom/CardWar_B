@@ -216,14 +216,16 @@ namespace ariel
         {
             return -1;
         }
+        //two win ace
         else if (rank == Rank::TWO && other.rank != Rank::TWO)
-        {
-            return -1;
-        }
-        else if (rank != Rank::TWO && other.rank == Rank::TWO)
         {
             return 1;
         }
+        else if (rank != Rank::TWO && other.rank == Rank::TWO)
+        {
+            return -1;
+        }
+  
         else if (rank == other.rank)
         {
             return 0;
