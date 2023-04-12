@@ -1,31 +1,38 @@
-<div dir="rtl" lang="he">
+# War Card Game
 
-# מלחמה
-במטלה זו נממש את משחק הקלפים מלחמה עבור שני שחקנים. 
-יש חפיסת קלפים רגיל עם 52 קלפים בתחילת המשחק החפיסה מעורבבת (בצורה ראנדומאלית) ומחולקת שווה בשווה בין שני השחקנים.
-בכל תור השחקנים שולפים קלף אחד מראש הערימה שלהם השחקן עם הקלף הגבוהה ביותר לוקח את שני הקלפים אליו (2 מנצח אס).
-אם השחקנים שלפו שני קלפים זהים אז הם מניחים קלף אחד הפוך ומעליו קלף פחות. השחק עם הקלף הגבוהה לוקח את כל ששת הקלפים. במידה ושוב יש תיקו ממשיכים עם קלף סגור ואחריו קלף פתוח עד שאחד השחקנים מנצח. התור נמשך עד שאחד השחקנים לוקח את הקופה או שנגמרים הקלפים. 
-אם נגמרים הקלפים תוך כדי השובר שיוויון כל שחקן לוקח את הקלפים שהוא זרק (מתחלקים בקופה חצי חצי).
-המשחק נמשך עד שנגמרים לשחקנים הקלפים והמנצח הוא השחקן שלקח לעצמו את מירב הקלפים. 
+A C++ simulation of the popular card game War, where two players draw cards from their decks and the player with the highest card wins.
 
-דוגמאות לפעולת המחלקה ניתן למצוא ב-[Demo.cpp](Demo.cpp).
+## Game Rules
 
-בשלב ב עליכם לכתוב את המימוש המלא. מותר לערוך את המימוש של שלב א אבל אם עשיתם עבודה טובה לא יהיה בכך צורך.
-יעלו טסטים נבחרים של סטודנטים. עליכם לעבור את כל הטסטים בציון 100. המטלה תיבדר ע"י הרצת
+The game is played with a standard deck of 52 cards.
 
-כיתבו את כל הקבצים הדרושים כך שהפקודות הבאות יעבדו ללא שגיאות:
+Each player is dealt half the deck, 26 cards each, face-down.
 
-<div dir='ltr'>
+Both players reveal the top card from their deck at the same time.
 
-    bash grade
+The player with the higher card takes both cards and adds them to the bottom of their deck.
 
-</div>
+If both players reveal cards of the same rank, a "war" occurs:
 
+- Both players draw one card face-down, and then another card face-up.
+- The player with the higher second card takes all cards on the table (including the face-down cards) and adds them to the bottom of their deck.
+- If the second cards are also equal, the process repeats until a player wins the war.
 
-שימו לב:
-אין לשנות קבצים קיימים, אלא רק להוסיף קבצים חדשים.
-מערכת הבדיקה האוטומטית מעתיקה מחדש את כל הקבצים הקיימים על-גבי הפתרון שאתם מגישים,
-ולכן כל שינוי שתעשו בקבצים הקיימים יימחק.
+The game continues until one player has all the cards or until a predetermined number of rounds have been played.
 
-בהצלחה
-</div>
+## Objects
+
+The game is implemented using the following classes:
+
+- `Card` - represents a single card in the deck, with a rank and a suit.
+- `Deck` - represents a deck of cards, with methods to shuffle and deal cards.
+- `Player` - represents a player in the game, with a deck of cards and methods to draw and add cards.
+- `Game` - represents the game itself, with two players, a deck of cards, and methods to play the game, keep track of the score, and print out the results.
+
+## Usage
+
+To run the simulation, compile the `Demo.cpp` file using a C++ compiler and execute the resulting program. The program will simulate a game of War and output the results to the console.
+
+```bash
+$ g++ Demo.cpp -o war
+$ ./war
