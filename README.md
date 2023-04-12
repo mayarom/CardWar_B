@@ -34,5 +34,5 @@ The game is implemented using the following classes:
 To run the simulation, compile the `Demo.cpp` file using a C++ compiler and execute the resulting program. The program will simulate a game of War and output the results to the console.
 
 ```bash
-$ g++ Demo.cpp -o war
-$ ./war
+$ make
+$ ./test1
